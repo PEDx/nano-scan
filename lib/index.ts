@@ -14,7 +14,7 @@ import {
   drawTargetRectangleRotated,
 } from './utils';
 
-interface ISnapScanOptions {
+interface INanoScanOptions {
   container: HTMLElement | null;
   zxingOptions?: ReaderOptions;
   zxingWASMUrl?: string;
@@ -33,7 +33,7 @@ interface ISnapScanOptions {
 
 const TRICK_DEGREE = 30;
 
-export class SnapScan {
+export class NanoScan {
   private zoom: number = 1;
   private cancelLoop: () => void = noop;
   videoNode: HTMLVideoElement;
@@ -43,7 +43,7 @@ export class SnapScan {
   onError: (error: Error) => void;
   supportNativeZoom: boolean | null = null;
   zoomRange: { min: number; max: number } | null = null;
-  options: ISnapScanOptions = {
+  options: INanoScanOptions = {
     container: null,
     marker: true,
     frame: true,
@@ -61,7 +61,7 @@ export class SnapScan {
     },
   };
 
-  constructor(options: ISnapScanOptions) {
+  constructor(options: INanoScanOptions) {
     this.options = { ...this.options, ...options };
     this.onScan = options.onScan || noop;
     this.onError = options.onError || noop;

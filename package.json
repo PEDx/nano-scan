@@ -1,5 +1,5 @@
 {
-  "name": "snap-scan",
+  "name": "nano-scan",
   "version": "1.0.0",
   "description": "A browser scanning component based on zxing",
   "main": "dist/umd/index.js",
@@ -14,6 +14,11 @@
     "build:example": "cd examples/react && vite build",
     "preview:example": "cd examples/react && vite preview"
   },
+  "homepage": "https://github.com/PEDx/nano-scan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PEDx/nano-scan"
+  },
   "keywords": [
     "scan",
     "qrcode",
@@ -21,7 +26,7 @@
     "zxing",
     "scanner"
   ],
-  "author": "",
+  "author": "alan.ped",
   "license": "MIT",
   "dependencies": {
     "zxing-wasm": "^2.1.2"
