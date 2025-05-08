@@ -9,13 +9,13 @@
 
 ## ✨ Features
 
-- 🔍 **Supports All ZXing Formats**  
+- 🔍 **Supports All ZXing Formats**
   Full access to `zxing-wasm`'s decoding capabilities, including QR codes, EAN, Code 128, and more.
 
-- 🎥 **Camera Zoom Fallback**  
+- 🎥 **Camera Zoom Fallback**
   Automatically falls back to canvas-based digital zoom when native camera zoom APIs are not available — ideal for scanning small codes (~1cm).
 
-- ⚡️ **Tiny & Easy to Integrate**  
+- ⚡️ **Tiny & Easy to Integrate**
   Minimal footprint and a clean API make NanoScan easy to drop into any web project.
 
 ## Install
