@@ -206,7 +206,7 @@ export default class NanoScan {
     const _zoom = Math.min(Math.max(zoom, this.zoomRange?.min || 1), this.zoomRange?.max || 1);
 
     if (this.supportNativeZoom) {
-      this.zoom = 1;
+      this.zoom = _zoom;
       applyVideoZoom(this.videoNode, _zoom);
       return;
     }

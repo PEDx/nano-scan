@@ -36,14 +36,15 @@ function setupCopyButton(text) {
   newCopyBtn.textContent = 'Copy Result';
 
   newCopyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(text)
+    navigator.clipboard
+      .writeText(text)
       .then(() => {
         newCopyBtn.textContent = 'Copied!';
         setTimeout(() => {
           newCopyBtn.textContent = 'Copy Result';
         }, 2000);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Could not copy text: ', err);
       });
   });
@@ -88,6 +89,8 @@ const nanoScan = new NanoScan({
   },
 });
 
+console.log(nanoScan);
+
 // Start scanning
 scanBtn.addEventListener('click', async () => {
   try {
@@ -120,12 +123,12 @@ stopBtn.addEventListener('click', () => {
 
 // Zoom in
 zoomInBtn.addEventListener('click', () => {
-  nanoScan.zoomIn(1);
+  nanoScan.zoomIn(0.5);
   updateStatus('Zoom increased');
 });
 
 // Zoom out
 zoomOutBtn.addEventListener('click', () => {
-  nanoScan.zoomOut(1);
+  nanoScan.zoomOut(0.5);
   updateStatus('Zoom decreased');
 });

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="keywords" content="Nano Scan, Nano Scan App, A browser scanning component based on zxing" />
     <meta name="description" content="Nano Scan App, Nano Scan, A browser scanning component based on zxing" />
@@ -12,9 +12,9 @@
     <meta property="og:url" content="" />
     <meta property="og:site_name" content="Nano Scan App" />
     <meta property="og:type" content="website" />
-    <link rel="icon" href="./logo.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="./logo.svg">
-    <link rel="shortcut icon" href="./logo.svg" type="image/x-icon">
+    <link rel="icon" href="./logo.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./logo.svg" />
+    <link rel="shortcut icon" href="./logo.svg" type="image/x-icon" />
 
     <title>Nano Scan App</title>
   </head>
@@ -52,8 +52,8 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 24px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 16px;
       max-width: 800px;
       margin: 0 auto;
       background-color: var(--background);
@@ -64,7 +64,7 @@
     .container {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 12px;
     }
 
     .card {
@@ -83,7 +83,7 @@
     }
 
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.6rem;
       background-color: var(--primary);
       color: var(--primary-foreground);
       border: none;
@@ -95,7 +95,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 32px;
+      height: 28px;
     }
 
     button:hover {
@@ -125,9 +125,10 @@
     #camera-container {
       width: 100%;
       max-width: 100%;
-      height: 400px;
+      aspect-ratio: 1 / 1;
       border-radius: var(--radius);
       overflow: hidden;
+      background-color: var(--muted);
     }
 
     .result-wrapper {
@@ -175,7 +176,7 @@
     }
 
     .result-content {
-      padding: 1rem;
+      padding: 12px;
     }
 
     .hidden {
@@ -205,7 +206,7 @@
     .logo {
       display: flex;
       align-items: center;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.025em;
       line-height: 1;
@@ -214,8 +215,12 @@
   <body>
     <div class="container">
       <h1 class="logo">
-        <img src="./logo.svg" alt="Nano Scan logo" height="54" style="margin-right: 12px;float: left;" valign="middle">
-        <div>Nano<br/>Scan</div>
+        <img src="./logo.svg" alt="Nano Scan logo" height="42" style="margin-right: 8px; float: left" valign="middle" />
+        <div>
+          Nano
+          <br />
+          Scan
+        </div>
       </h1>
 
       <div class="card">
@@ -244,7 +249,31 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      // Check if the current URL is in IP format (like 192.168.1.1)
+      function isIPAddress(url) {
+        // Extract hostname from URL
+        let hostname;
+        try {
+          hostname = new URL(url).hostname;
+        } catch (e) {
+          hostname = window.location.hostname;
+        }
 
+        // Check if hostname is an IP address (IPv4)
+        const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+        return ipv4Regex.test(hostname);
+      }
+
+      // Only initialize eruda if we're on an IP address
+      if (isIPAddress(window.location.href)) {
+        eruda.init();
+      } else {
+        // Don't initialize eruda for non-IP addresses
+        console.log('Eruda not initialized (not an IP address)');
+      }
+    </script>
     <!-- Load nano-scan from CDN -->
     <script src="./nano-scan.js"></script>
     <script src="./main.js"></script>
