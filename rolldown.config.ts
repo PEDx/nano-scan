@@ -10,6 +10,11 @@ export default defineConfig({
       name: 'NanoScan',
     },
     {
+      file: 'docs/nano-scan.js',
+      format: 'umd',
+      name: 'NanoScan',
+    },
+    {
       file: 'dist/esm/index.js',
       format: 'esm',
     },

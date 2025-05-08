@@ -1,10 +1,17 @@
 <h1>
-  <img src="./assets/logo.svg" alt="Nano Scan logo" height="64" valign="middle">
+  <img src="./docs/logo.svg" alt="Nano Scan logo" height="64" valign="middle">
   <div>Nano Scan</div>
 </h1>
 
 **NanoScan** is a lightweight, high-performance web barcode and QR code scanner powered by [`zxing-wasm`](https://github.com/Sec-ant/zxing-wasm). Designed for maximum compatibility and flexibility, it supports all barcode types recognized by zxing-wasm and includes enhanced support for small or distant codes via canvas-based zooming.
 
+<div align="center">
+  <h3>
+    <a href="https://pedx.github.io/nano-scan/" target="_blank" rel="noopener noreferrer">
+      👉 Try the live demo
+    </a>
+  </h3>
+</div>
 ---
 
 ## ✨ Features
