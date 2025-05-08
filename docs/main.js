@@ -124,11 +124,11 @@ stopBtn.addEventListener('click', () => {
 // Zoom in
 zoomInBtn.addEventListener('click', () => {
   nanoScan.zoomIn(0.5);
-  updateStatus('Zoom increased');
+  updateStatus(`Zoom increased to ${nanoScan.zoom}`);
 });
 
 // Zoom out
 zoomOutBtn.addEventListener('click', () => {
   nanoScan.zoomOut(0.5);
-  updateStatus('Zoom decreased');
+  updateStatus(`Zoom decreased to ${nanoScan.zoom}`);
 });
