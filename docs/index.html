@@ -40,7 +40,9 @@
       --border: hsl(240 5.9% 90%);
       --input: hsl(240 5.9% 90%);
       --ring: hsl(240 5.9% 10%);
-      --radius: 0.5rem;
+      --radius: 0.4rem;
+      --success: #10b981;
+      --error: #ef4444;
     }
 
     * {
@@ -93,7 +95,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 40px;
+      height: 32px;
     }
 
     button:hover {
@@ -104,9 +106,20 @@
       transform: translateY(1px);
     }
 
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     button.secondary {
       background-color: var(--secondary);
       color: var(--secondary-foreground);
+    }
+
+    button.small {
+      font-size: 0.75rem;
+      height: 32px;
+      padding: 0 12px;
     }
 
     #camera-container {
@@ -117,7 +130,7 @@
       overflow: hidden;
     }
 
-    #result {
+    .result-wrapper {
       padding: 1rem;
       border-radius: var(--radius);
       background-color: var(--muted);
@@ -126,8 +139,51 @@
       font-size: 0.875rem;
     }
 
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background-color: var(--muted-foreground);
+    }
+
+    .status-dot.success {
+      background-color: var(--success);
+    }
+
+    .status-dot.error {
+      background-color: var(--error);
+    }
+
+    .status-message {
+      flex: 1;
+    }
+
+    .result-actions {
+      margin-top: 8px;
+      display: none;
+    }
+
+    .result-actions.visible {
+      display: block;
+    }
+
     .result-content {
       padding: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .font-medium {
+      font-weight: 500;
     }
 
     .footer {
@@ -166,9 +222,9 @@
         <div class="result-content">
           <div class="ctrl">
             <button id="scan-btn">Start Scan</button>
-            <button id="stop-btn" class="secondary">Stop</button>
-            <button id="zoom-in-btn" class="secondary">Zoom In</button>
-            <button id="zoom-out-btn" class="secondary">Zoom Out</button>
+            <button id="stop-btn" class="secondary" disabled>Stop</button>
+            <button id="zoom-in-btn" class="secondary" disabled>Zoom In</button>
+            <button id="zoom-out-btn" class="secondary" disabled>Zoom Out</button>
           </div>
           <div id="camera-container"></div>
         </div>
@@ -176,7 +232,15 @@
 
       <div class="card">
         <div class="result-content">
-          <div id="result">Scan results will appear here...</div>
+          <div id="result" class="result-wrapper">
+            <div class="status-indicator">
+              <div id="status-dot" class="status-dot"></div>
+              <div id="status-message" class="status-message">Scan results will appear here...</div>
+            </div>
+            <div id="result-actions" class="result-actions">
+              <button id="copy-btn" class="secondary small">Copy Result</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
