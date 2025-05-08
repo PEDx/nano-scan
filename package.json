@@ -1,7 +1,7 @@
 {
   "name": "nano-scan",
   "version": "0.0.1",
-  "description": "A browser scanning component based on zxing",
+  "description": "A browser scanning component based on zxing-wasm",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",

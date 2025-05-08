@@ -7,7 +7,7 @@ export default defineConfig({
     {
       file: 'dist/umd/index.js',
       format: 'umd',
-      name: 'SnapScan',
+      name: 'NanoScan',
     },
     {
       file: 'dist/esm/index.js',

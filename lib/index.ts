@@ -33,7 +33,7 @@ interface INanoScanOptions {
 
 const TRICK_DEGREE = 30;
 
-export class NanoScan {
+export default class NanoScan {
   private zoom: number = 1;
   private cancelLoop: () => void = noop;
   videoNode: HTMLVideoElement;
