@@ -89,8 +89,6 @@ const nanoScan = new NanoScan({
   },
 });
 
-console.log(nanoScan);
-
 // Start scanning
 scanBtn.addEventListener('click', async () => {
   try {
@@ -99,6 +97,8 @@ scanBtn.addEventListener('click', async () => {
     resultActions.classList.remove('visible');
 
     await nanoScan.startScan();
+
+    console.log(nanoScan);
 
     updateStatus('Scanning... Point your camera at a QR code or barcode.');
     stopBtn.disabled = false;
