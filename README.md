@@ -1,4 +1,4 @@
-<h1>
+<h1 align="center">
   <img src="./docs/logo.svg" alt="Nano Scan logo" height="64" valign="middle">
   <div>Nano Scan</div>
 </h1>
@@ -39,7 +39,7 @@ import NanoScan from 'nano-scan';
 const nanoScan = new NanoScan({
   container: document.getElementById('camera-container'),
   resolution: {
-    width: 1920,
+    width: 1080,
     height: 1080,
   },
   fps: 30,
