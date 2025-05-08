@@ -19,7 +19,7 @@ function updateStatus(message, isSuccess = true) {
 const nanoScan = new NanoScan({
   container: document.getElementById('camera-container'),
   resolution: {
-    width: 1920,
+    width: 1080,
     height: 1080,
   },
   fps: 30,
@@ -37,14 +37,15 @@ const nanoScan = new NanoScan({
 
     // Add copy functionality
     document.getElementById('copy-btn').addEventListener('click', () => {
-      navigator.clipboard.writeText(result)
+      navigator.clipboard
+        .writeText(result)
         .then(() => {
           document.getElementById('copy-btn').textContent = 'Copied!';
           setTimeout(() => {
             document.getElementById('copy-btn').textContent = 'Copy Result';
           }, 2000);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('Could not copy text: ', err);
         });
     });
@@ -90,12 +91,12 @@ stopBtn.addEventListener('click', () => {
 
 // Zoom in event
 zoomInBtn.addEventListener('click', () => {
-  nanoScan.zoomIn(0.2);
+  nanoScan.zoomIn(1);
   updateStatus(`Zoom increased`);
 });
 
 // Zoom out event
 zoomOutBtn.addEventListener('click', () => {
-  nanoScan.zoomOut(0.2);
+  nanoScan.zoomOut(1);
   updateStatus(`Zoom decreased`);
 });
