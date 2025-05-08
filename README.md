@@ -3,7 +3,7 @@
   <div>Nano Scan</div>
 </h1>
 
-**NanoScan** is a lightweight, high-performance web barcode and QR code scanner powered by [`zxing-wasm`](https://github.com/zxing-js/library). Designed for maximum compatibility and flexibility, it supports all barcode types recognized by zxing-wasm and includes enhanced support for small or distant codes via canvas-based zooming.
+**NanoScan** is a lightweight, high-performance web barcode and QR code scanner powered by [`zxing-wasm`](https://github.com/Sec-ant/zxing-wasm). Designed for maximum compatibility and flexibility, it supports all barcode types recognized by zxing-wasm and includes enhanced support for small or distant codes via canvas-based zooming.
 
 ---
 
