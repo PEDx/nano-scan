@@ -1,4 +1,7 @@
-<h1 style="font-size: 24px;"><img src="./assets/logo.svg" alt="Nano Scan logo" height="64" style="margin-right: 12px;float: left;" valign="middle"><span>Nano<br/>Scan</span> </h1>
+<h1>
+  <img src="./assets/logo.svg" alt="Nano Scan logo" height="64" valign="middle">
+  <div>Nano Scan</div>
+</h1>
 a browser scanning component based on zxing-wasm
 
 ## Install
