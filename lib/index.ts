@@ -12,6 +12,7 @@ import {
   drawTargetRectangle,
   drawCameraFrame,
   drawTargetRectangleRotated,
+  applyVideoTorch,
 } from './utils';
 
 interface INanoScanOptions {
@@ -212,5 +213,9 @@ export default class NanoScan {
     }
 
     this.zoom = _zoom;
+  }
+
+  toggleTorch(bool: boolean) {
+    applyVideoTorch(this.videoNode, bool);
   }
 }

@@ -10,9 +10,7 @@
   ],
   "scripts": {
     "build": "rolldown -c rolldown.config.ts",
-    "dev": "cd examples/react && vite",
-    "build:example": "cd examples/react && vite build",
-    "preview:example": "cd examples/react && vite preview"
+    "dev": "cd docs && vite"
   },
   "homepage": "https://github.com/PEDx/nano-scan",
   "repository": {

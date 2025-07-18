@@ -122,6 +122,11 @@
       padding: 0 12px;
     }
 
+    button.active {
+      background-color: var(--success);
+      color: #fff;
+    }
+
     #camera-container {
       width: 100%;
       max-width: 100%;
@@ -256,6 +261,7 @@
             <button id="stop-btn" class="secondary" disabled>Stop</button>
             <button id="zoom-in-btn" class="secondary" disabled title="Zoom In">🔎+</button>
             <button id="zoom-out-btn" class="secondary" disabled title="Zoom Out">🔎-</button>
+            <button id="torch-btn" class="secondary" disabled title="Toggle Flash">💡</button>
           </div>
           <div id="camera-container"></div>
         </div>
@@ -299,8 +305,6 @@
         // Don't initialize eruda for non-IP addresses
       }
     </script>
-    <!-- Load nano-scan from CDN -->
-    <script src="./nano-scan.js"></script>
-    <script src="./main.js"></script>
+    <script src="./main.js" type="module"></script>
   </body>
 </html>

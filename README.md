@@ -152,6 +152,18 @@ zoomTo(zoom: number): void
 | --------- | -------- | ----------------- |
 | `zoom`    | `number` | Zoom level to set |
 
+#### toggleTorch(open)
+
+Toggles the camera's torch (flashlight) on or off, if supported by the device.
+
+```ts
+toggleTorch(bool: boolean): void
+```
+
+| Parameter | Type     | Description       |
+| --------- | -------- | ----------------- |
+| `bool`    | `boolean` | torch (flashlight) on or off |
+
 ## License
 
 [MIT](LICENSE)

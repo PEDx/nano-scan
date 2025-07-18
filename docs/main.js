@@ -1,3 +1,5 @@
+import NanoScan from '../dist/esm/index.js';
+
 // DOM element references
 const scanBtn = document.getElementById('scan-btn');
 const stopBtn = document.getElementById('stop-btn');
@@ -8,6 +10,7 @@ const statusDot = document.getElementById('status-dot');
 const statusMessage = document.getElementById('status-message');
 const resultActions = document.getElementById('result-actions');
 const copyBtn = document.getElementById('copy-btn');
+const torchBtn = document.getElementById('torch-btn');
 
 // Store current scan result
 let currentScanResult = '';
@@ -104,6 +107,9 @@ scanBtn.addEventListener('click', async () => {
     stopBtn.disabled = false;
     zoomInBtn.disabled = false;
     zoomOutBtn.disabled = false;
+    torchBtn.disabled = false;
+    torchBtn.textContent = '💡';
+    torchBtn.dataset.torch = 'off';
   } catch (error) {
     updateStatus(`Failed to start camera: ${error.message}`, false);
     scanBtn.disabled = false;
@@ -113,12 +119,34 @@ scanBtn.addEventListener('click', async () => {
 // Stop scanning
 stopBtn.addEventListener('click', () => {
   nanoScan.stopScan();
-  updateStatus('Scanning stopped');
   scanBtn.disabled = false;
   stopBtn.disabled = true;
   zoomInBtn.disabled = true;
   zoomOutBtn.disabled = true;
+  torchBtn.disabled = true;
+  torchBtn.textContent = '💡';
+  torchBtn.dataset.torch = 'off';
   currentScanResult = '';
+});
+
+// Torch toggle
+// 默认关闭，点击切换开关
+// 需要记住当前状态
+// 视觉反馈：开时高亮，关时普通
+// 这里用data-torch属性记录状态
+
+torchBtn.addEventListener('click', () => {
+  const isOn = torchBtn.dataset.torch === 'on';
+  nanoScan.toggleTorch(!isOn);
+  if (isOn) {
+    torchBtn.dataset.torch = 'off';
+    torchBtn.textContent = '💡';
+    torchBtn.classList.remove('active');
+  } else {
+    torchBtn.dataset.torch = 'on';
+    torchBtn.textContent = '💡 ON';
+    torchBtn.classList.add('active');
+  }
 });
 
 // Zoom in

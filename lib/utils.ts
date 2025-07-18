@@ -40,6 +40,12 @@ export async function listCameras() {
   return cameras;
 }
 
+export async function applyVideoTorch(video: HTMLVideoElement, torch: boolean) {
+  const track = (video.srcObject as MediaStream).getVideoTracks()[0];
+  const constraints = { advanced: [{ torch: torch }] };
+  await track.applyConstraints(constraints as MediaTrackConstraints);
+}
+
 export function closeStream(stream: MediaStream) {
   if (stream) {
     const tracks = stream.getTracks();
