@@ -17,4 +17,12 @@ export default defineConfig([
     ],
     plugins: [typescript({ tsconfig: './tsconfig.json' })],
   },
+  {
+    input: 'lib/index.ts',
+    output: {
+      file: 'docs/nano-scan.js',
+      format: 'esm',
+      name: 'NanoScan',
+    },
+  },
 ]);

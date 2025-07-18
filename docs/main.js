@@ -1,4 +1,4 @@
-import NanoScan from '../dist/esm/index.js';
+import NanoScan from './nano-scan.js';
 
 // DOM element references
 const scanBtn = document.getElementById('scan-btn');
