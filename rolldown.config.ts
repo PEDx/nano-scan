@@ -9,10 +9,12 @@ export default defineConfig([
         file: 'dist/umd/index.js',
         format: 'umd',
         name: 'NanoScan',
+        minify: true,
       },
       {
         file: 'dist/esm/index.js',
         format: 'esm',
+        minify: true,
       },
     ],
     plugins: [typescript({ tsconfig: './tsconfig.json' })],

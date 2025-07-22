@@ -75,8 +75,15 @@ export const resolutions = [
 ];
 
 export async function openCamera({ width, height, video }: { width: number; height: number; video: HTMLVideoElement }) {
+  const isPortrait = window.screen.availHeight > window.screen.availWidth;
+
   const videoConstraints = {
-    video: { width: width, height: height, zoom: true, facingMode: 'environment' },
+    video: {
+      width: { exact: isPortrait ? height : width },
+      height: { exact: isPortrait ? width : height },
+      zoom: true,
+      facingMode: 'environment',
+    },
     audio: false,
   };
   try {
