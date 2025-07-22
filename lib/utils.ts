@@ -79,8 +79,8 @@ export async function openCamera({ width, height, video }: { width: number; heig
 
   const videoConstraints = {
     video: {
-      width: { exact: isPortrait ? height : width },
-      height: { exact: isPortrait ? width : height },
+      width: isPortrait ? height : width,
+      height: isPortrait ? width : height,
       zoom: true,
       facingMode: 'environment',
     },
