@@ -1,16 +1,16 @@
 import { readBarcodes, ReaderOptions, ReadResult } from 'zxing-wasm/reader';
 
 export function checkCameraConstraintsCapabilities(video: HTMLVideoElement, key: string) {
-  const videoTracks = (video.srcObject as MediaStream).getVideoTracks();
+  const videoTracks = (video.srcObject as MediaStream | null)?.getVideoTracks() || [];
   const track = videoTracks[0];
   const capabilities = track?.getCapabilities() as Record<string, any>;
   return !!capabilities?.[key];
 }
 
 export function getCameraCapabilitiesZoomRange(video: HTMLVideoElement) {
-  const videoTracks = (video.srcObject as MediaStream).getVideoTracks();
+  const videoTracks = (video.srcObject as MediaStream | null)?.getVideoTracks() || [];
   const track = videoTracks[0];
-  const capabilities = track?.getCapabilities() as Record<string, any>;
+  const capabilities = (track?.getCapabilities() as Record<string, any>) || {};
   const ret = {
     min: 1,
     max: 1,
@@ -23,7 +23,10 @@ export function getCameraCapabilitiesZoomRange(video: HTMLVideoElement) {
 }
 
 export async function applyVideoZoom(video: HTMLVideoElement, zoom: number) {
-  const track = (video.srcObject as MediaStream).getVideoTracks()[0];
+  const track = (video.srcObject as MediaStream | null)?.getVideoTracks()[0];
+  if (!track) {
+    throw new Error('Camera track not found');
+  }
   const constraints = { advanced: [{ zoom: zoom }] };
   await track.applyConstraints(constraints as MediaTrackConstraints);
 }
@@ -41,7 +44,10 @@ export async function listCameras() {
 }
 
 export async function applyVideoTorch(video: HTMLVideoElement, torch: boolean) {
-  const track = (video.srcObject as MediaStream).getVideoTracks()[0];
+  const track = (video.srcObject as MediaStream | null)?.getVideoTracks()[0];
+  if (!track) {
+    throw new Error('Camera track not found');
+  }
   const constraints = { advanced: [{ torch: torch }] };
   await track.applyConstraints(constraints as MediaTrackConstraints);
 }
@@ -58,11 +64,15 @@ export function closeStream(stream: MediaStream) {
 
 export async function requestCameraPermission() {
   try {
-    const constraints = { video: true, audio: false, facingMode: 'environment' };
+    const constraints = {
+      video: {
+        facingMode: 'environment',
+      },
+      audio: false,
+    };
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     closeStream(stream);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
@@ -86,14 +96,18 @@ export async function openCamera({ width, height, video }: { width: number; heig
     },
     audio: false,
   };
+  const cameraStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
+  video.srcObject = cameraStream;
   try {
-    const cameraStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
-
-    video.srcObject = cameraStream;
     await video.play();
   } catch (error) {
-    alert(error);
+    closeStream(cameraStream);
+    if (video.srcObject === cameraStream) {
+      video.srcObject = null;
+    }
+    throw error;
   }
+  return cameraStream;
 }
 
 export async function closeCamera(video: HTMLVideoElement) {
@@ -226,7 +240,7 @@ export function drawCameraFrame(
   ctx.stroke();
 }
 
-export const fixedFPSCall = (call: () => void, fps: number = 60) => {
+export const fixedFPSCall = (call: () => void | Promise<void>, fps: number = 60) => {
   let now;
   let then = Date.now();
   let interval = 1000 / fps;
@@ -239,7 +253,7 @@ export const fixedFPSCall = (call: () => void, fps: number = 60) => {
     delta = now - then;
     if (delta > interval) {
       then = now - (delta % interval);
-      call();
+      void Promise.resolve(call()).catch(noop);
     }
   }
   tick();

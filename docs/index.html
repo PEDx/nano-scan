@@ -4,45 +4,144 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta name="keywords" content="Nano Scan App, QR code, QR code scanner, zoom in and out, wasm qr scanner, lightweight, high-performance web barcode and QR code scanner" />
-    <meta name="description" content="Nano Scan App, QR code, QR code scanner, zoom in and out, wasm qr scanner, lightweight, high-performance web barcode and QR code scanner" />
-    <meta property="og:title" content="Nano Scan App" />
-    <meta property="og:description" content="Nano Scan App, QR code, QR code scanner, zoom in and out, wasm qr scanner, lightweight, high-performance web barcode and QR code scanner" />
-    <meta property="og:image" content="./logo.svg" type="image/svg+xml" />
-    <meta property="og:url" content="https://pedx.github.io/nano-scan" />
-    <meta property="og:site_name" content="Nano Scan App" />
+    <title>Nano Scan | Web QR Code & Barcode Scanner with Zoom</title>
+    <meta
+      name="description"
+      content="Scan QR codes and barcodes in your browser with zoom, torch support, instant links, and quick scan history."
+    />
+    <meta
+      name="keywords"
+      content="Nano Scan, web QR code scanner, web barcode scanner, browser QR scanner, zxing-wasm, QR code scanner with zoom, barcode reader, mobile camera scanner"
+    />
+    <meta name="author" content="PEDx" />
+    <meta name="application-name" content="Nano Scan" />
+    <meta name="apple-mobile-web-app-title" content="Nano Scan" />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="theme-color" content="#4361ee" />
+    <link rel="canonical" href="https://pedx.github.io/nano-scan/" />
+    <meta property="og:title" content="Nano Scan | Web QR Code & Barcode Scanner with Zoom" />
+    <meta
+      property="og:description"
+      content="Scan QR codes and barcodes in your browser with zoom, torch support, instant links, and quick scan history."
+    />
+    <meta property="og:image" content="https://pedx.github.io/nano-scan/logo.svg" />
+    <meta property="og:image:alt" content="Nano Scan logo" />
+    <meta property="og:url" content="https://pedx.github.io/nano-scan/" />
+    <meta property="og:site_name" content="Nano Scan" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Nano Scan | Web QR Code & Barcode Scanner with Zoom" />
+    <meta
+      name="twitter:description"
+      content="Scan QR codes and barcodes in your browser with zoom, torch support, instant links, and quick scan history."
+    />
+    <meta name="twitter:image" content="https://pedx.github.io/nano-scan/logo.svg" />
     <link rel="icon" href="./logo.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./logo.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="./logo.svg" type="image/x-icon" />
-
-    <title>Nano Scan App</title>
-  </head>
-
-  <style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://github.com/PEDx/#organization",
+            "name": "PEDx",
+            "url": "https://github.com/PEDx",
+            "sameAs": ["https://github.com/PEDx"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://pedx.github.io/nano-scan/#website",
+            "url": "https://pedx.github.io/nano-scan/",
+            "name": "Nano Scan",
+            "description": "Nano Scan is a lightweight, high-performance web QR code and barcode scanner powered by zxing-wasm.",
+            "inLanguage": "en",
+            "publisher": {
+              "@id": "https://github.com/PEDx/#organization"
+            }
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://pedx.github.io/nano-scan/#webapp",
+            "name": "Nano Scan",
+            "url": "https://pedx.github.io/nano-scan/",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript and camera access in a modern browser.",
+            "softwareVersion": "0.0.4",
+            "image": "https://pedx.github.io/nano-scan/logo.svg",
+            "description": "A browser-based QR code and barcode scanner with zxing-wasm, camera zoom fallback, torch control, and scan history.",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Browser-based QR code and barcode scanning",
+              "Powered by zxing-wasm",
+              "Native camera zoom with digital zoom fallback",
+              "Torch control on supported devices",
+              "Scan history and quick copy actions"
+            ],
+            "creator": {
+              "@id": "https://github.com/PEDx/#organization"
+            },
+            "sameAs": ["https://github.com/PEDx/nano-scan"]
+          }
+        ]
+      }
+    </script>
+    <style>
     :root {
-      --background: hsl(0 0% 100%);
-      --foreground: hsl(240 10% 3.9%);
-      --card: hsl(0 0% 100%);
-      --card-foreground: hsl(240 10% 3.9%);
-      --popover: hsl(0 0% 100%);
-      --popover-foreground: hsl(240 10% 3.9%);
-      --primary: hsl(240 5.9% 10%);
-      --primary-foreground: hsl(0 0% 98%);
-      --secondary: hsl(240 4.8% 95.9%);
-      --secondary-foreground: hsl(240 5.9% 10%);
-      --muted: hsl(240 4.8% 95.9%);
-      --muted-foreground: hsl(240 3.8% 46.1%);
-      --accent: hsl(240 4.8% 95.9%);
-      --accent-foreground: hsl(240 5.9% 10%);
-      --destructive: hsl(0 84.2% 60.2%);
-      --destructive-foreground: hsl(0 0% 98%);
-      --border: hsl(240 5.9% 90%);
-      --input: hsl(240 5.9% 90%);
-      --ring: hsl(240 5.9% 10%);
-      --radius: 0.4rem;
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --surface-hover: #f1f3f5;
+      --text: #1a1a2e;
+      --text-secondary: #6c757d;
+      --border: #e9ecef;
+      --primary: #4361ee;
+      --primary-hover: #3a56d4;
+      --primary-fg: #ffffff;
+      --secondary: #f1f3f5;
+      --secondary-fg: #495057;
+      --secondary-hover: #e9ecef;
       --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
       --error: #ef4444;
+      --error-bg: rgba(239, 68, 68, 0.1);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --camera-bg: #e9ecef;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #21262d;
+      --text: #e6edf3;
+      --text-secondary: #8b949e;
+      --border: #30363d;
+      --primary: #58a6ff;
+      --primary-hover: #79b8ff;
+      --primary-fg: #0d1117;
+      --secondary: #21262d;
+      --secondary-fg: #c9d1d9;
+      --secondary-hover: #30363d;
+      --success: #3fb950;
+      --success-bg: rgba(63, 185, 80, 0.15);
+      --error: #f85149;
+      --error-bg: rgba(248, 81, 73, 0.15);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --camera-bg: #21262d;
     }
 
     * {
@@ -52,111 +151,339 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
       padding: 16px;
-      max-width: 800px;
+      max-width: 480px;
       margin: 0 auto;
-      background-color: var(--background);
-      color: var(--foreground);
+      background-color: var(--bg);
+      color: var(--text);
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-copy {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .logo-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-subtitle {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .github-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: var(--secondary);
+      border-radius: 50%;
+      color: var(--secondary-fg);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .github-link:hover {
+      background-color: var(--secondary-hover);
+      transform: scale(1.05);
+    }
+
+    /* Card */
     .card {
       border-radius: var(--radius);
-      background-color: var(--card);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      overflow: hidden;
+      background-color: var(--surface);
+      box-shadow: var(--shadow-sm);
       border: 1px solid var(--border);
+      overflow: hidden;
     }
 
-    .ctrl {
+    .intro-card {
+      background:
+        radial-gradient(circle at top right, rgba(67, 97, 238, 0.12), transparent 40%),
+        var(--surface);
+    }
+
+    .intro-eyebrow {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .intro-title {
+      margin-bottom: 8px;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .intro-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .feature-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 8px;
+      list-style: none;
+      margin-top: 14px;
     }
 
-    button {
-      padding: 0.4rem 0.6rem;
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 0.875rem;
+    .feature-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background-color: var(--secondary);
+      color: var(--secondary-fg);
+      font-size: 12px;
       font-weight: 500;
-      transition: all 0.2s ease;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    /* Buttons */
+    button {
+      padding: 0 14px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 28px;
+      gap: 6px;
+      background-color: var(--secondary);
+      color: var(--secondary-fg);
+      font-family: inherit;
     }
 
-    button:hover {
-      opacity: 0.9;
+    button:hover:not(:disabled) {
+      background-color: var(--secondary-hover);
     }
 
-    button:active {
-      transform: translateY(1px);
+    button:active:not(:disabled) {
+      transform: scale(0.97);
     }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    button.secondary {
-      background-color: var(--secondary);
-      color: var(--secondary-foreground);
+    button.primary {
+      background-color: var(--primary);
+      color: var(--primary-fg);
+      border-color: var(--primary);
     }
 
-    button.small {
-      font-size: 0.75rem;
-      height: 32px;
-      padding: 0 12px;
+    button.primary:hover:not(:disabled) {
+      background-color: var(--primary-hover);
     }
 
     button.active {
       background-color: var(--success);
       color: #fff;
+      border-color: var(--success);
     }
 
+    button.small {
+      height: 30px;
+      font-size: 12px;
+      padding: 0 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Camera container */
     #camera-container {
       width: 100%;
-      max-width: 100%;
       aspect-ratio: 1 / 1;
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       overflow: hidden;
-      background-color: var(--muted);
+      background-color: var(--camera-bg);
+      position: relative;
     }
 
-    .result-wrapper {
-      padding: 1rem;
-      border-radius: var(--radius);
-      background-color: var(--muted);
-      color: var(--muted-foreground);
-      min-height: 40px;
-      font-size: 0.875rem;
+    /* Loading overlay */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background-color: var(--camera-bg);
+      z-index: 10;
+      transition: opacity 0.3s ease;
     }
 
-    .status-indicator {
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Zoom slider */
+    .zoom-control {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .zoom-control.hidden {
+      display: none;
+    }
+
+    .zoom-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 36px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .zoom-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+    }
+
+    .zoom-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: 2px solid var(--surface);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s ease;
+    }
+
+    .zoom-slider::-webkit-slider-thumb:active {
+      transform: scale(1.2);
+    }
+
+    .zoom-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: 2px solid var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Status result */
+    .result-box {
+      border-radius: var(--radius-sm);
+      background-color: var(--secondary);
+      padding: 12px;
+      min-height: 44px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .result-box.success {
+      background-color: var(--success-bg);
+    }
+
+    .result-box.error {
+      background-color: var(--error-bg);
     }
 
     .status-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
-      background-color: var(--muted-foreground);
+      margin-top: 6px;
+      background-color: var(--text-secondary);
+      transition: background-color 0.2s ease;
     }
 
     .status-dot.success {
@@ -167,143 +494,338 @@
       background-color: var(--error);
     }
 
-    .status-message {
+    .result-body {
       flex: 1;
+      min-width: 0;
+    }
+
+    .result-text {
+      font-size: 14px;
+      word-break: break-all;
     }
 
     .result-actions {
+      display: flex;
+      gap: 6px;
       margin-top: 8px;
+    }
+
+    .result-actions.hidden {
       display: none;
     }
 
-    .result-actions.visible {
-      display: block;
+    /* History */
+    .history-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .result-content {
-      padding: 12px;
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background-color: var(--secondary);
+      font-size: 13px;
+      transition: background-color 0.15s ease;
+      cursor: pointer;
     }
 
-    .hidden {
-      display: none;
+    .history-item:hover {
+      background-color: var(--secondary-hover);
     }
 
-    .font-medium {
+    .history-index {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 18px;
+    }
+
+    .history-text {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    .history-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 12px;
       font-weight: 500;
+      white-space: nowrap;
     }
 
-    .footer {
-      margin-top: 2rem;
-      font-size: 0.75rem;
-      color: var(--muted-foreground);
+    .history-link:hover {
+      text-decoration: underline;
+    }
+
+    .history-copy {
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      border: none;
+      background: none;
+      padding: 2px 6px;
+      height: auto;
+    }
+
+    .history-copy:hover {
+      color: var(--text);
+    }
+
+    .history-empty {
+      font-size: 13px;
+      color: var(--text-secondary);
       text-align: center;
+      padding: 12px 0;
     }
 
-    @media (max-width: 640px) {
-      body {
-        padding: 16px;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background-color: var(--secondary);
+      color: var(--text-secondary);
     }
-    .logo {
+
+    .badge.native {
+      background-color: var(--success-bg);
+      color: var(--success);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 8px 0 16px;
+    }
+
+    .footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Animations */
+    @keyframes flash-success {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .flash {
+      animation: flash-success 0.6s ease;
+    }
+
+    html[data-theme="dark"] .flash {
+      animation: flash-success-dark 0.6s ease;
+    }
+
+    @keyframes flash-success-dark {
+      0% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(63, 185, 80, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
+    }
+
+    /* Theme toggle */
+    .header-actions {
       display: flex;
       align-items: center;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      line-height: 1;
+      gap: 8px;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .github-link {
+    .theme-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px;
+      width: 40px;
+      height: 40px;
       background-color: var(--secondary);
-      border-radius: 100%;
-      color: var(--secondary-foreground);
+      border-radius: 50%;
+      border: none;
+      color: var(--secondary-fg);
+      cursor: pointer;
       transition: all 0.2s ease;
+      padding: 0;
+      font-size: 18px;
     }
 
-    .github-link:hover {
-      background-color: var(--muted);
+    .theme-toggle:hover {
+      background-color: var(--secondary-hover);
+      transform: scale(1.05);
     }
-  </style>
+
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon,
+    .theme-toggle .icon-auto {
+      display: none;
+    }
+
+    html[data-theme-pref="light"] .theme-toggle .icon-sun { display: block; }
+    html[data-theme-pref="dark"] .theme-toggle .icon-moon { display: block; }
+    html[data-theme-pref="system"] .theme-toggle .icon-auto { display: block; }
+    </style>
+  </head>
+
   <body>
-    <div class="container">
-      <div class="header">
-        <h1 class="logo">
-          <img src="./logo.svg" alt="Nano Scan logo" height="42" style="margin-right: 8px; float: left" valign="middle" />
-          <div>
-            Nano
-            <br />
-            Scan
-          </div>
-        </h1>
-        <a href="https://github.com/PEDx/nano-scan" class="github-link" target="_blank" rel="noopener noreferrer" title="View on GitHub">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        </a>
-      </div>
-
-      <div class="card">
-        <div class="result-content">
-          <div class="ctrl">
-            <button id="scan-btn">Start Scan</button>
-            <button id="stop-btn" class="secondary" disabled>Stop</button>
-            <button id="zoom-in-btn" class="secondary" disabled title="Zoom In">🔎+</button>
-            <button id="zoom-out-btn" class="secondary" disabled title="Zoom Out">🔎-</button>
-            <button id="torch-btn" class="secondary" disabled title="Toggle Flash">💡</button>
-          </div>
-          <div id="camera-container"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="result-content">
-          <div id="result" class="result-wrapper">
-            <div class="status-indicator">
-              <div id="status-dot" class="status-dot"></div>
-              <div id="status-message" class="status-message">Scan results will appear here...</div>
-            </div>
-            <div id="result-actions" class="result-actions">
-              <button id="copy-btn" class="secondary small">Copy Result</button>
-            </div>
+    <main class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <img src="./logo.svg" alt="Nano Scan" height="38" />
+          <div class="logo-copy">
+            <h1 class="logo-title">Nano Scan</h1>
+            <p class="logo-subtitle">Web QR &amp; barcode scanner</p>
           </div>
         </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+            <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-auto" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20" opacity="0.3"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>
+          </button>
+          <a href="https://github.com/PEDx/nano-scan" class="github-link" target="_blank" rel="noopener noreferrer" title="View on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </header>
+
+      <section class="card intro-card" aria-labelledby="intro-title">
+        <div class="card-body">
+          <div class="intro-eyebrow">Browser Scanner</div>
+          <h2 id="intro-title" class="intro-title">Scan QR codes and barcodes directly in your browser</h2>
+          <p class="intro-text">
+            Open links instantly, capture tiny or distant codes with zoom, scan in dim environments with torch support,
+            and keep a quick history of recent results so you can copy, revisit, and move through repeated scans without
+            breaking your flow.
+          </p>
+          <ul class="feature-list" aria-label="Key features">
+            <li class="feature-item">QR &amp; barcode scanning</li>
+            <li class="feature-item">zxing-wasm powered</li>
+            <li class="feature-item">Zoom fallback</li>
+            <li class="feature-item">Torch support</li>
+            <li class="feature-item">Mobile friendly</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Scanner Card -->
+      <section class="card" aria-labelledby="scanner-title">
+        <div class="card-body">
+          <h2 id="scanner-title" class="card-title">Scanner</h2>
+          <div class="btn-group" style="margin-bottom: 12px;">
+            <div class="btn-row">
+              <button id="scan-btn" class="primary">Start</button>
+              <button id="stop-btn" disabled>Stop</button>
+              <button id="torch-btn" disabled>Torch</button>
+            </div>
+            <span id="zoom-badge" class="badge" style="display: none;"></span>
+          </div>
+
+          <div id="camera-container">
+            <div id="loading-overlay" class="loading-overlay hidden">
+              <div class="spinner"></div>
+              <div class="loading-text">Opening camera...</div>
+            </div>
+          </div>
+
+          <div id="zoom-control" class="zoom-control hidden">
+            <span class="zoom-label" id="zoom-min">1x</span>
+            <input type="range" class="zoom-slider" id="zoom-slider" min="1" max="10" step="0.1" value="2" />
+            <span class="zoom-label" id="zoom-value">2.0x</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Result Card -->
+      <section class="card" aria-labelledby="result-title">
+        <div class="card-body">
+          <h2 id="result-title" class="card-title">Result</h2>
+          <div id="result-box" class="result-box">
+            <div id="status-dot" class="status-dot"></div>
+            <div class="result-body">
+              <div id="result-text" class="result-text">Scan results will appear here...</div>
+              <div id="result-actions" class="result-actions hidden">
+                <button id="copy-btn" class="small">Copy</button>
+                <button id="open-btn" class="small primary" style="display: none;">Open Link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Card -->
+      <section class="card" aria-labelledby="history-title">
+        <div class="card-body">
+          <h2 id="history-title" class="card-title">History</h2>
+          <div id="history-container">
+            <div class="history-empty">No scan history yet</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        Powered by <a href="https://github.com/PEDx/nano-scan" target="_blank" rel="noopener noreferrer">Nano Scan</a>
       </div>
-    </div>
+    </main>
+
+    <script>
+      // Theme: apply saved preference before paint to avoid FOUC
+      (function() {
+        var STORAGE_KEY = 'nano-scan-theme';
+        var saved = localStorage.getItem(STORAGE_KEY);
+        // Cycle: system -> light -> dark
+        function getEffective(pref) {
+          if (pref === 'light' || pref === 'dark') return pref;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        function apply(pref) {
+          var p = pref || 'system';
+          document.documentElement.setAttribute('data-theme', getEffective(p));
+          document.documentElement.setAttribute('data-theme-pref', p);
+        }
+        apply(saved || 'system');
+
+        // Listen for system changes when in "system" mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+          var current = localStorage.getItem(STORAGE_KEY);
+          if (!current || current === 'system') apply('system');
+        });
+
+        // Toggle button logic (after DOM ready)
+        document.addEventListener('DOMContentLoaded', function() {
+          var btn = document.getElementById('theme-toggle');
+          if (!btn) return;
+          var order = ['system', 'light', 'dark'];
+          btn.addEventListener('click', function() {
+            var current = localStorage.getItem(STORAGE_KEY) || 'system';
+            var next = order[(order.indexOf(current) + 1) % order.length];
+            localStorage.setItem(STORAGE_KEY, next);
+            apply(next);
+          });
+        });
+      })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>
-      // Check if the current URL is in IP format (like 192.168.1.1)
-      function isIPAddress(url) {
-        // Extract hostname from URL
-        let hostname;
+      (function() {
         try {
-          hostname = new URL(url).hostname;
-        } catch (e) {
-          hostname = window.location.hostname;
-        }
-
-        // Check if hostname is an IP address (IPv4)
-        const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
-        return ipv4Regex.test(hostname);
-      }
-
-      // Only initialize eruda if we're on an IP address
-      if (isIPAddress(window.location.href)) {
-        eruda.init();
-      } else {
-        // Don't initialize eruda for non-IP addresses
-      }
+          var h = new URL(window.location.href).hostname;
+          if (/^(\d{1,3}\.){3}\d{1,3}$/.test(h)) eruda.init();
+        } catch(e) {}
+      })();
     </script>
     <script src="./main.js" type="module"></script>
   </body>

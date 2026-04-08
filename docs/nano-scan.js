@@ -1665,15 +1665,15 @@ async function be(F$1, x$1) {
 //#endregion
 //#region lib/utils.ts
 function checkCameraConstraintsCapabilities(video, key) {
-	const videoTracks = video.srcObject.getVideoTracks();
+	const videoTracks = video.srcObject?.getVideoTracks() || [];
 	const track = videoTracks[0];
 	const capabilities = track?.getCapabilities();
 	return !!capabilities?.[key];
 }
 function getCameraCapabilitiesZoomRange(video) {
-	const videoTracks = video.srcObject.getVideoTracks();
+	const videoTracks = video.srcObject?.getVideoTracks() || [];
 	const track = videoTracks[0];
-	const capabilities = track?.getCapabilities();
+	const capabilities = track?.getCapabilities() || {};
 	const ret = {
 		min: 1,
 		max: 1
@@ -1685,12 +1685,14 @@ function getCameraCapabilitiesZoomRange(video) {
 	return ret;
 }
 async function applyVideoZoom(video, zoom) {
-	const track = video.srcObject.getVideoTracks()[0];
+	const track = video.srcObject?.getVideoTracks()[0];
+	if (!track) throw new Error("Camera track not found");
 	const constraints = { advanced: [{ zoom }] };
 	await track.applyConstraints(constraints);
 }
 async function applyVideoTorch(video, torch) {
-	const track = video.srcObject.getVideoTracks()[0];
+	const track = video.srcObject?.getVideoTracks()[0];
+	if (!track) throw new Error("Camera track not found");
 	const constraints = { advanced: [{ torch }] };
 	await track.applyConstraints(constraints);
 }
@@ -1706,14 +1708,12 @@ function closeStream(stream) {
 async function requestCameraPermission() {
 	try {
 		const constraints = {
-			video: true,
-			audio: false,
-			facingMode: "environment"
+			video: { facingMode: "environment" },
+			audio: false
 		};
 		const stream = await navigator.mediaDevices.getUserMedia(constraints);
 		closeStream(stream);
 	} catch (error) {
-		console.log(error);
 		throw error;
 	}
 }
@@ -1728,13 +1728,16 @@ async function openCamera({ width, height, video }) {
 		},
 		audio: false
 	};
+	const cameraStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
+	video.srcObject = cameraStream;
 	try {
-		const cameraStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
-		video.srcObject = cameraStream;
 		await video.play();
 	} catch (error) {
-		alert(error);
+		closeStream(cameraStream);
+		if (video.srcObject === cameraStream) video.srcObject = null;
+		throw error;
 	}
+	return cameraStream;
 }
 async function closeCamera(video) {
 	const stream = video.srcObject;
@@ -1829,7 +1832,7 @@ const fixedFPSCall = (call, fps = 60) => {
 		delta = now - then;
 		if (delta > interval) {
 			then = now - delta % interval;
-			call();
+			Promise.resolve(call()).catch(noop);
 		}
 	}
 	tick();
@@ -1845,6 +1848,8 @@ const TRICK_DEGREE = 30;
 var NanoScan = class {
 	zoom = 1;
 	cancelLoop = noop;
+	scanSession = 0;
+	isDecodingFrame = false;
 	videoNode;
 	cameraCanvasNode;
 	offscreenCanvasNode;
@@ -1891,19 +1896,38 @@ var NanoScan = class {
 		if (!this.options.container) throw new Error("Container is required");
 		this.options.container.appendChild(this.cameraCanvasNode);
 	}
+	reportError(error) {
+		const normalized = error instanceof Error ? error : new Error(String(error));
+		this.onError(normalized);
+		return normalized;
+	}
 	async startScan() {
+		const session = ++this.scanSession;
 		this.cancelLoop();
-		await requestCameraPermission();
+		await closeCamera(this.videoNode);
+		let cameraStream = null;
+		try {
+			await requestCameraPermission();
+			cameraStream = await openCamera({
+				width: this.options.resolution.width,
+				height: this.options.resolution.height,
+				video: this.videoNode
+			});
+		} catch (error) {
+			throw this.reportError(error);
+		}
+		if (session !== this.scanSession) {
+			if (cameraStream) {
+				closeStream(cameraStream);
+				if (this.videoNode.srcObject === cameraStream) this.videoNode.srcObject = null;
+			}
+			return;
+		}
 		const video = this.videoNode;
 		const cameraCanvas = this.cameraCanvasNode;
 		const offscreenCanvas = this.offscreenCanvasNode;
 		const offscreenCtx = offscreenCanvas.getContext("2d", { willReadFrequently: true });
 		const cameraCtx = cameraCanvas.getContext("2d", { willReadFrequently: true });
-		await openCamera({
-			width: this.options.resolution.width,
-			height: this.options.resolution.height,
-			video
-		});
 		this.supportNativeZoom = checkCameraConstraintsCapabilities(this.videoNode, "zoom");
 		this.zoomRange = this.supportNativeZoom ? getCameraCapabilitiesZoomRange(this.videoNode) : {
 			min: 1,
@@ -1919,35 +1943,47 @@ var NanoScan = class {
 			offscreenCtx.translate(-offscreenCanvas.width / 2, -offscreenCanvas.height / 2);
 		}
 		const drawCanvas = async () => {
-			let scanCanvasCtx = cameraCtx;
-			const scaledWidth = video?.videoWidth * this.zoom;
-			const scaledHeight = video?.videoHeight * this.zoom;
-			const scaledX = (video?.videoWidth - scaledWidth) / 2;
-			const scaledY = (video?.videoHeight - scaledHeight) / 2;
-			cameraCtx?.drawImage(video, 0, 0, video?.videoWidth, video?.videoHeight, scaledX, scaledY, scaledWidth, scaledHeight);
-			if (this.options.frame) drawCameraFrame(cameraCtx, {
-				size: .8,
-				length: .1,
-				color: "rgba(255, 255, 255, 0.8)"
-			});
-			if (this.options.trick) {
-				offscreenCtx.drawImage(video, 0, 0, video?.videoWidth, video?.videoHeight, scaledX, scaledY, scaledWidth, scaledHeight);
-				scanCanvasCtx = offscreenCtx;
+			if (session !== this.scanSession || this.isDecodingFrame) return;
+			this.isDecodingFrame = true;
+			try {
+				if (session !== this.scanSession) return;
+				if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+				let scanCanvasCtx = cameraCtx;
+				const scaledWidth = video?.videoWidth * this.zoom;
+				const scaledHeight = video?.videoHeight * this.zoom;
+				const scaledX = (video?.videoWidth - scaledWidth) / 2;
+				const scaledY = (video?.videoHeight - scaledHeight) / 2;
+				cameraCtx?.drawImage(video, 0, 0, video?.videoWidth, video?.videoHeight, scaledX, scaledY, scaledWidth, scaledHeight);
+				if (this.options.frame) drawCameraFrame(cameraCtx, {
+					size: .8,
+					length: .1,
+					color: "rgba(255, 255, 255, 0.8)"
+				});
+				if (this.options.trick) {
+					offscreenCtx.drawImage(video, 0, 0, video?.videoWidth, video?.videoHeight, scaledX, scaledY, scaledWidth, scaledHeight);
+					scanCanvasCtx = offscreenCtx;
+				}
+				const decoded = await scanCanvas(scanCanvasCtx, this.options.zxingOptions);
+				if (session !== this.scanSession || !decoded || !decoded.text) return;
+				this.onScan(decoded.text);
+				if (this.options.marker) if (this.options.trick) {
+					decoded.position.degree = -TRICK_DEGREE;
+					drawTargetRectangleRotated(cameraCtx, decoded.position);
+				} else drawTargetRectangle(cameraCtx, decoded.position);
+			} catch (error) {
+				this.reportError(error);
+			} finally {
+				this.isDecodingFrame = false;
 			}
-			const decoded = await scanCanvas(scanCanvasCtx);
-			if (!decoded || !decoded.text) return;
-			this.onScan(decoded.text);
-			if (this.options.marker) if (this.options.trick) {
-				decoded.position.degree = -TRICK_DEGREE;
-				drawTargetRectangleRotated(cameraCtx, decoded.position);
-			} else drawTargetRectangle(cameraCtx, decoded.position);
 		};
 		this.zoomTo(this.options.zoom || 1);
 		this.cancelLoop = fixedFPSCall(drawCanvas, this.options.fps);
 	}
 	stopScan() {
+		this.scanSession += 1;
 		this.cancelLoop();
 		closeCamera(this.videoNode);
+		this.isDecodingFrame = false;
 	}
 	zoomIn(step = .1) {
 		this.zoomTo(this.zoom + step);
@@ -1957,15 +1993,18 @@ var NanoScan = class {
 	}
 	zoomTo(zoom) {
 		const _zoom = Math.min(Math.max(zoom, this.zoomRange?.min || 1), this.zoomRange?.max || 1);
+		this.zoom = _zoom;
 		if (this.supportNativeZoom) {
-			this.zoom = _zoom;
-			applyVideoZoom(this.videoNode, _zoom);
+			applyVideoZoom(this.videoNode, _zoom).catch((error) => {
+				this.reportError(error);
+			});
 			return;
 		}
-		this.zoom = _zoom;
 	}
 	toggleTorch(bool) {
-		applyVideoTorch(this.videoNode, bool);
+		applyVideoTorch(this.videoNode, bool).catch((error) => {
+			this.reportError(error);
+		});
 	}
 };
 

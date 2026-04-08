@@ -1,162 +1,260 @@
 import NanoScan from './nano-scan.js';
 
-// DOM element references
+// DOM references
 const scanBtn = document.getElementById('scan-btn');
 const stopBtn = document.getElementById('stop-btn');
-const zoomInBtn = document.getElementById('zoom-in-btn');
-const zoomOutBtn = document.getElementById('zoom-out-btn');
-const resultElement = document.getElementById('result');
+const torchBtn = document.getElementById('torch-btn');
+const loadingOverlay = document.getElementById('loading-overlay');
+const zoomControl = document.getElementById('zoom-control');
+const zoomSlider = document.getElementById('zoom-slider');
+const zoomValue = document.getElementById('zoom-value');
+const zoomMin = document.getElementById('zoom-min');
+const zoomBadge = document.getElementById('zoom-badge');
+const resultBox = document.getElementById('result-box');
 const statusDot = document.getElementById('status-dot');
-const statusMessage = document.getElementById('status-message');
+const resultText = document.getElementById('result-text');
 const resultActions = document.getElementById('result-actions');
 const copyBtn = document.getElementById('copy-btn');
-const torchBtn = document.getElementById('torch-btn');
+const openBtn = document.getElementById('open-btn');
+const historyContainer = document.getElementById('history-container');
 
-// Store current scan result
-let currentScanResult = '';
-let isScanProcessing = false;
+// State
+const MAX_HISTORY = 5;
+const SCAN_COOLDOWN = 2000;
+let history = [];
 let lastScanTime = 0;
-const scanCooldown = 2000; // Don't process the same scan result within 2 seconds
+let lastScanResult = '';
+let currentResult = '';
 
-// Update status display (using class names instead of innerHTML)
-function updateStatus(message, isSuccess = true) {
-  statusDot.className = 'status-dot';
-  if (isSuccess) {
-    statusDot.classList.add('success');
-  } else {
-    statusDot.classList.add('error');
+// Helpers
+function isUrl(text) {
+  try {
+    const url = new URL(text);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
   }
-  statusMessage.textContent = message;
 }
 
-// Copy result to clipboard
-function setupCopyButton(text) {
-  // Remove previous event listeners
-  copyBtn.replaceWith(copyBtn.cloneNode(true));
-
-  // Get new button reference and add event listener
-  const newCopyBtn = document.getElementById('copy-btn');
-  newCopyBtn.textContent = 'Copy Result';
-
-  newCopyBtn.addEventListener('click', () => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        newCopyBtn.textContent = 'Copied!';
-        setTimeout(() => {
-          newCopyBtn.textContent = 'Copy Result';
-        }, 2000);
-      })
-      .catch((err) => {
-        console.error('Could not copy text: ', err);
-      });
-  });
+function setStatus(text, type = 'idle') {
+  resultText.textContent = text;
+  statusDot.className = 'status-dot';
+  resultBox.className = 'result-box';
+  if (type === 'success') {
+    statusDot.classList.add('success');
+    resultBox.classList.add('success');
+    resultBox.classList.add('flash');
+    setTimeout(() => resultBox.classList.remove('flash'), 600);
+  } else if (type === 'error') {
+    statusDot.classList.add('error');
+    resultBox.classList.add('error');
+  }
 }
 
-// Handle scan result
-function handleScanResult(result) {
-  const now = Date.now();
+function showResultActions(result) {
+  currentResult = result;
+  resultActions.classList.remove('hidden');
+  copyBtn.textContent = 'Copy';
+  if (isUrl(result)) {
+    openBtn.style.display = 'inline-flex';
+    openBtn.onclick = () => window.open(result, '_blank', 'noopener,noreferrer');
+  } else {
+    openBtn.style.display = 'none';
+  }
+}
 
-  // Ignore if it's the same result and within cooldown period
-  if (result === currentScanResult && now - lastScanTime < scanCooldown) {
+function hideResultActions() {
+  resultActions.classList.add('hidden');
+  openBtn.style.display = 'none';
+}
+
+function renderHistory() {
+  if (history.length === 0) {
+    historyContainer.innerHTML = '<div class="history-empty">No scan history yet</div>';
     return;
   }
+  const list = document.createElement('ul');
+  list.className = 'history-list';
+  history.forEach((item, idx) => {
+    const li = document.createElement('li');
+    li.className = 'history-item';
+    li.title = item;
 
-  // Update time and result
-  lastScanTime = now;
-  currentScanResult = result;
+    const index = document.createElement('span');
+    index.className = 'history-index';
+    index.textContent = `#${idx + 1}`;
 
-  // Update UI
-  updateStatus(`Scan result: ${result}`, true);
+    const text = document.createElement('span');
+    text.className = 'history-text';
+    text.textContent = item;
 
-  // Show copy button area
-  resultActions.classList.add('visible');
+    li.appendChild(index);
+    li.appendChild(text);
 
-  // Setup copy button
-  setupCopyButton(result);
+    if (isUrl(item)) {
+      const link = document.createElement('a');
+      link.className = 'history-link';
+      link.href = item;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Open';
+      link.onclick = (e) => e.stopPropagation();
+      li.appendChild(link);
+    }
+
+    const copyButton = document.createElement('button');
+    copyButton.className = 'history-copy';
+    copyButton.textContent = 'Copy';
+    copyButton.onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(item).then(() => {
+        copyButton.textContent = 'Copied';
+        setTimeout(() => (copyButton.textContent = 'Copy'), 1500);
+      });
+    };
+    li.appendChild(copyButton);
+
+    li.onclick = () => {
+      setStatus(item, 'success');
+      showResultActions(item);
+    };
+
+    list.appendChild(li);
+  });
+  historyContainer.innerHTML = '';
+  historyContainer.appendChild(list);
 }
 
-// Initialize NanoScan
+function addToHistory(result) {
+  // Dedupe: remove if already exists, then prepend
+  history = history.filter((r) => r !== result);
+  history.unshift(result);
+  if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+  renderHistory();
+}
+
+function updateZoomDisplay(zoom) {
+  zoomValue.textContent = `${zoom.toFixed(1)}x`;
+  zoomBadge.textContent = `Zoom ${zoom.toFixed(1)}x`;
+}
+
+// NanoScan instance
 const nanoScan = new NanoScan({
   container: document.getElementById('camera-container'),
-  resolution: {
-    width: 1080,
-    height: 1080,
-  },
+  resolution: { width: 1080, height: 1080 },
   fps: 30,
   zoom: 2,
-  onScan: handleScanResult,
+  onScan: (result) => {
+    const now = Date.now();
+    if (result === lastScanResult && now - lastScanTime < SCAN_COOLDOWN) return;
+    lastScanTime = now;
+    lastScanResult = result;
+    setStatus(result, 'success');
+    showResultActions(result);
+    addToHistory(result);
+  },
   onError: (error) => {
     console.error(error);
-    updateStatus(`Error: ${error.message}`, false);
+    setStatus(`Error: ${error.message}`, 'error');
   },
 });
 
-// Start scanning
+// Setup camera state UI
+function setScanningUI(isScanning) {
+  scanBtn.disabled = isScanning;
+  stopBtn.disabled = !isScanning;
+  torchBtn.disabled = !isScanning;
+  if (isScanning) {
+    zoomControl.classList.remove('hidden');
+    zoomBadge.style.display = 'inline-flex';
+  } else {
+    zoomControl.classList.add('hidden');
+    zoomBadge.style.display = 'none';
+  }
+}
+
+// Start scan
 scanBtn.addEventListener('click', async () => {
   try {
-    updateStatus('Starting camera...');
+    setStatus('Starting camera...', 'idle');
     scanBtn.disabled = true;
-    resultActions.classList.remove('visible');
+    hideResultActions();
+    loadingOverlay.classList.remove('hidden');
 
     await nanoScan.startScan();
 
-    console.log(nanoScan);
+    loadingOverlay.classList.add('hidden');
+    setScanningUI(true);
 
-    updateStatus('Scanning... Point your camera at a QR code or barcode.');
-    stopBtn.disabled = false;
-    zoomInBtn.disabled = false;
-    zoomOutBtn.disabled = false;
-    torchBtn.disabled = false;
-    torchBtn.textContent = '💡';
+    // Configure zoom slider from actual zoomRange
+    const range = nanoScan.zoomRange || { min: 1, max: 10 };
+    zoomSlider.min = range.min;
+    zoomSlider.max = range.max;
+    zoomSlider.step = Math.max((range.max - range.min) / 100, 0.1);
+    const initialZoom = Math.min(Math.max(nanoScan.zoom || 1, range.min), range.max);
+    zoomSlider.value = initialZoom;
+    zoomMin.textContent = `${range.min}x`;
+    updateZoomDisplay(initialZoom);
+
+    // Badge shows native vs digital zoom
+    zoomBadge.classList.toggle('native', !!nanoScan.supportNativeZoom);
+    zoomBadge.title = nanoScan.supportNativeZoom ? 'Native camera zoom' : 'Digital canvas zoom';
+
+    setStatus('Scanning... Point camera at a code', 'idle');
+
+    // Reset torch UI
+    torchBtn.textContent = 'Torch';
+    torchBtn.classList.remove('active');
     torchBtn.dataset.torch = 'off';
   } catch (error) {
-    updateStatus(`Failed to start camera: ${error.message}`, false);
+    loadingOverlay.classList.add('hidden');
+    setStatus(`Failed: ${error.message}`, 'error');
     scanBtn.disabled = false;
   }
 });
 
-// Stop scanning
+// Stop scan
 stopBtn.addEventListener('click', () => {
   nanoScan.stopScan();
-  scanBtn.disabled = false;
-  stopBtn.disabled = true;
-  zoomInBtn.disabled = true;
-  zoomOutBtn.disabled = true;
-  torchBtn.disabled = true;
-  torchBtn.textContent = '💡';
+  setScanningUI(false);
+  setStatus('Scanner stopped', 'idle');
+  lastScanResult = '';
+  torchBtn.textContent = 'Torch';
+  torchBtn.classList.remove('active');
   torchBtn.dataset.torch = 'off';
-  currentScanResult = '';
 });
 
 // Torch toggle
-// 默认关闭，点击切换开关
-// 需要记住当前状态
-// 视觉反馈：开时高亮，关时普通
-// 这里用data-torch属性记录状态
-
 torchBtn.addEventListener('click', () => {
   const isOn = torchBtn.dataset.torch === 'on';
-  nanoScan.toggleTorch(!isOn);
-  if (isOn) {
-    torchBtn.dataset.torch = 'off';
-    torchBtn.textContent = '💡';
-    torchBtn.classList.remove('active');
-  } else {
-    torchBtn.dataset.torch = 'on';
-    torchBtn.textContent = '💡 ON';
-    torchBtn.classList.add('active');
+  try {
+    nanoScan.toggleTorch(!isOn);
+    if (isOn) {
+      torchBtn.dataset.torch = 'off';
+      torchBtn.textContent = 'Torch';
+      torchBtn.classList.remove('active');
+    } else {
+      torchBtn.dataset.torch = 'on';
+      torchBtn.textContent = 'Torch On';
+      torchBtn.classList.add('active');
+    }
+  } catch (e) {
+    setStatus('Torch not supported', 'error');
   }
 });
 
-// Zoom in
-zoomInBtn.addEventListener('click', () => {
-  nanoScan.zoomIn(0.5);
-  updateStatus(`Zoom increased to ${nanoScan.zoom}`);
+// Zoom slider
+zoomSlider.addEventListener('input', (e) => {
+  const z = parseFloat(e.target.value);
+  nanoScan.zoomTo(z);
+  updateZoomDisplay(z);
 });
 
-// Zoom out
-zoomOutBtn.addEventListener('click', () => {
-  nanoScan.zoomOut(0.5);
-  updateStatus(`Zoom decreased to ${nanoScan.zoom}`);
+// Copy current result
+copyBtn.addEventListener('click', () => {
+  if (!currentResult) return;
+  navigator.clipboard.writeText(currentResult).then(() => {
+    copyBtn.textContent = 'Copied';
+    setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
+  });
 });

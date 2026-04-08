@@ -9,6 +9,7 @@ import {
   applyVideoZoom,
   openCamera,
   closeCamera,
+  closeStream,
   drawTargetRectangle,
   drawCameraFrame,
   drawTargetRectangleRotated,
@@ -37,6 +38,8 @@ const TRICK_DEGREE = 30;
 export default class NanoScan {
   private zoom: number = 1;
   private cancelLoop: () => void = noop;
+  private scanSession = 0;
+  private isDecodingFrame = false;
   videoNode: HTMLVideoElement;
   cameraCanvasNode: HTMLCanvasElement;
   offscreenCanvasNode: HTMLCanvasElement;
@@ -92,9 +95,39 @@ export default class NanoScan {
     this.options.container.appendChild(this.cameraCanvasNode);
   }
 
+  private reportError(error: unknown) {
+    const normalized = error instanceof Error ? error : new Error(String(error));
+    this.onError(normalized);
+    return normalized;
+  }
+
   async startScan() {
+    const session = ++this.scanSession;
     this.cancelLoop();
-    await requestCameraPermission();
+    await closeCamera(this.videoNode);
+    let cameraStream: MediaStream | null = null;
+
+    try {
+      await requestCameraPermission();
+      cameraStream = await openCamera({
+        width: this.options.resolution.width,
+        height: this.options.resolution.height,
+        video: this.videoNode,
+      });
+    } catch (error) {
+      throw this.reportError(error);
+    }
+
+    if (session !== this.scanSession) {
+      if (cameraStream) {
+        closeStream(cameraStream);
+        if (this.videoNode.srcObject === cameraStream) {
+          this.videoNode.srcObject = null;
+        }
+      }
+      return;
+    }
+
     const video = this.videoNode;
     const cameraCanvas = this.cameraCanvasNode;
     const offscreenCanvas = this.offscreenCanvasNode;
@@ -102,11 +135,6 @@ export default class NanoScan {
     const offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true })!;
     const cameraCtx = cameraCanvas.getContext('2d', { willReadFrequently: true })!;
 
-    await openCamera({
-      width: this.options.resolution.width,
-      height: this.options.resolution.height,
-      video,
-    });
     this.supportNativeZoom = checkCameraConstraintsCapabilities(this.videoNode, 'zoom');
     this.zoomRange = this.supportNativeZoom ? getCameraCapabilitiesZoomRange(this.videoNode) : { min: 1, max: 10 };
 
@@ -127,34 +155,27 @@ export default class NanoScan {
     }
 
     const drawCanvas = async () => {
-      let scanCanvasCtx = cameraCtx;
-      const scaledWidth = video?.videoWidth * this.zoom;
-      const scaledHeight = video?.videoHeight * this.zoom;
-      const scaledX = (video?.videoWidth - scaledWidth) / 2;
-      const scaledY = (video?.videoHeight - scaledHeight) / 2;
-      cameraCtx?.drawImage(
-        video,
-        0,
-        0,
-        video?.videoWidth,
-        video?.videoHeight,
-        scaledX,
-        scaledY,
-        scaledWidth,
-        scaledHeight,
-      );
-
-      if (this.options.frame) {
-        drawCameraFrame(cameraCtx, {
-          size: 0.8,
-          length: 0.1,
-          color: 'rgba(255, 255, 255, 0.8)',
-        });
+      if (session !== this.scanSession || this.isDecodingFrame) {
+        return;
       }
 
-      if (this.options.trick) {
-        // Draw the image on the offscreen canvas with zoom
-        offscreenCtx.drawImage(
+      this.isDecodingFrame = true;
+
+      try {
+        if (session !== this.scanSession) {
+          return;
+        }
+
+        if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+          return;
+        }
+
+        let scanCanvasCtx = cameraCtx;
+        const scaledWidth = video?.videoWidth * this.zoom;
+        const scaledHeight = video?.videoHeight * this.zoom;
+        const scaledX = (video?.videoWidth - scaledWidth) / 2;
+        const scaledY = (video?.videoHeight - scaledHeight) / 2;
+        cameraCtx?.drawImage(
           video,
           0,
           0,
@@ -166,22 +187,51 @@ export default class NanoScan {
           scaledHeight,
         );
 
-        scanCanvasCtx = offscreenCtx;
-      }
-
-      const decoded = await scanCanvas(scanCanvasCtx);
-
-      if (!decoded || !decoded.text) return;
-
-      this.onScan(decoded.text);
-
-      if (this.options.marker) {
-        if (this.options.trick) {
-          (decoded.position as any).degree = -TRICK_DEGREE;
-          drawTargetRectangleRotated(cameraCtx, decoded.position);
-        } else {
-          drawTargetRectangle(cameraCtx, decoded.position);
+        if (this.options.frame) {
+          drawCameraFrame(cameraCtx, {
+            size: 0.8,
+            length: 0.1,
+            color: 'rgba(255, 255, 255, 0.8)',
+          });
         }
+
+        if (this.options.trick) {
+          // Draw the image on the offscreen canvas with zoom
+          offscreenCtx.drawImage(
+            video,
+            0,
+            0,
+            video?.videoWidth,
+            video?.videoHeight,
+            scaledX,
+            scaledY,
+            scaledWidth,
+            scaledHeight,
+          );
+
+          scanCanvasCtx = offscreenCtx;
+        }
+
+        const decoded = await scanCanvas(scanCanvasCtx, this.options.zxingOptions);
+
+        if (session !== this.scanSession || !decoded || !decoded.text) {
+          return;
+        }
+
+        this.onScan(decoded.text);
+
+        if (this.options.marker) {
+          if (this.options.trick) {
+            (decoded.position as any).degree = -TRICK_DEGREE;
+            drawTargetRectangleRotated(cameraCtx, decoded.position);
+          } else {
+            drawTargetRectangle(cameraCtx, decoded.position);
+          }
+        }
+      } catch (error) {
+        this.reportError(error);
+      } finally {
+        this.isDecodingFrame = false;
       }
     };
 
@@ -191,8 +241,10 @@ export default class NanoScan {
   }
 
   stopScan() {
+    this.scanSession += 1;
     this.cancelLoop();
     closeCamera(this.videoNode);
+    this.isDecodingFrame = false;
   }
 
   zoomIn(step: number = 0.1) {
@@ -206,16 +258,19 @@ export default class NanoScan {
   zoomTo(zoom: number) {
     const _zoom = Math.min(Math.max(zoom, this.zoomRange?.min || 1), this.zoomRange?.max || 1);
 
+    this.zoom = _zoom;
+
     if (this.supportNativeZoom) {
-      this.zoom = _zoom;
-      applyVideoZoom(this.videoNode, _zoom);
+      void applyVideoZoom(this.videoNode, _zoom).catch((error) => {
+        this.reportError(error);
+      });
       return;
     }
-
-    this.zoom = _zoom;
   }
 
   toggleTorch(bool: boolean) {
-    applyVideoTorch(this.videoNode, bool);
+    void applyVideoTorch(this.videoNode, bool).catch((error) => {
+      this.reportError(error);
+    });
   }
 }
