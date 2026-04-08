@@ -19,5 +19,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "./rolldown.config.ts", "./dist"]
+  "exclude": ["node_modules", "./rolldown.config.ts", "./vitest.config.ts", "./dist", "./test"]
 }
