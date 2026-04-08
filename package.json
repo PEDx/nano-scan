@@ -9,7 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "rolldown -c rolldown.config.ts",
+    "build": "npm run build:js && npm run build:types",
+    "build:js": "rolldown -c rolldown.config.ts",
+    "build:types": "tsc -p tsconfig.build.json",
     "dev": "cd docs && vite"
   },
   "homepage": "https://github.com/PEDx/nano-scan",

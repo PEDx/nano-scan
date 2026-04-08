@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./lib",
+    "outDir": "./dist",
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": false,
+    "allowJs": false
+  },
+  "include": ["lib/**/*.ts"],
+  "exclude": ["node_modules", "dist", "docs", "rolldown.config.ts"]
+}

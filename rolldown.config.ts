@@ -17,7 +17,15 @@ export default defineConfig([
         minify: true,
       },
     ],
-    plugins: [typescript({ tsconfig: './tsconfig.json' })],
+    plugins: [
+      typescript({
+        tsconfig: './tsconfig.json',
+        compilerOptions: {
+          declaration: false,
+          declarationMap: false,
+        },
+      }),
+    ],
   },
   {
     input: 'lib/index.ts',
