@@ -85,7 +85,7 @@ constructor(options: INanoScanOptions)
 | `container`    | `HTMLElement \| null`               | `null`                                                            | **Required**. HTML container element for displaying camera preview             |
 | `resolution`   | `{ width: number, height: number }` | `{ width: 1080, height: 1080 }`                                   | Camera resolution                                                              |
 | `zxingOptions` | `ReaderOptions`                     | `{ tryHarder: true, formats: ['QRCode'], maxNumberOfSymbols: 1 }` | zxing-wasm reader options                                                      |
-| `zxingWASMUrl` | `string`                            | `undefined`                                                       | Custom zxing-wasm WebAssembly file URL                                         |
+| `zxingWASMUrl` | `string`                            | `undefined`                                                       | Custom WebAssembly URL; otherwise zxing-wasm's built-in CDN is used             |
 | `marker`       | `boolean`                           | `true`                                                            | Whether to display scan result marker                                          |
 | `frame`        | `boolean`                           | `true`                                                            | Whether to display scan frame                                                  |
 | `fps`          | `number`                            | `30`                                                              | Scanning frame rate                                                            |
@@ -96,6 +96,14 @@ constructor(options: INanoScanOptions)
 
 ### Methods
 
+#### ready()
+
+Downloads, compiles, and initializes the zxing-wasm module. The returned promise is cached. Calling this method is optional because `startScan()` waits for it automatically.
+
+```ts
+ready(): Promise<void>
+```
+
 #### startScan()
 
 Starts the scanning process.
@@ -104,7 +112,7 @@ Starts the scanning process.
 async startScan(): Promise<void>
 ```
 
-Initializes the camera, sets up canvases, and begins the scanning loop.
+Waits for zxing-wasm to be ready, initializes the camera, sets up canvases, and begins the scanning loop.
 
 #### stopScan()
 

@@ -1,5 +1,4 @@
 import { defineConfig } from 'rolldown';
-import typescript from '@rollup/plugin-typescript';
 
 export default defineConfig([
   {
@@ -16,15 +15,6 @@ export default defineConfig([
         format: 'esm',
         minify: true,
       },
-    ],
-    plugins: [
-      typescript({
-        tsconfig: './tsconfig.json',
-        compilerOptions: {
-          declaration: false,
-          declarationMap: false,
-        },
-      }),
     ],
   },
   {

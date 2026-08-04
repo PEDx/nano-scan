@@ -40,6 +40,7 @@ export default class NanoScan {
   private cancelLoop: () => void = noop;
   private scanSession = 0;
   private isDecodingFrame = false;
+  private zxingReady: Promise<void> | null = null;
   videoNode: HTMLVideoElement;
   cameraCanvasNode: HTMLCanvasElement;
   offscreenCanvasNode: HTMLCanvasElement;
@@ -75,24 +76,39 @@ export default class NanoScan {
     this.cameraCanvasNode.style.width = `100%`;
     this.offscreenCanvasNode.style.width = `100%`;
 
-    if (this.options.zxingWASMUrl) {
-      const wasm_url = this.options.zxingWASMUrl;
-      prepareZXingModule({
-        overrides: {
-          locateFile: (path, prefix) => {
-            if (path.endsWith('.wasm')) {
-              return wasm_url;
-            }
-            return prefix + path;
-          },
-        },
-      });
-    }
-
     if (!this.options.container) {
       throw new Error('Container is required');
     }
     this.options.container.appendChild(this.cameraCanvasNode);
+  }
+
+  ready() {
+    if (!this.zxingReady) {
+      const wasmUrl = this.options.zxingWASMUrl;
+      const initialization = wasmUrl
+        ? prepareZXingModule({
+            fireImmediately: true,
+            overrides: {
+              locateFile: (path: string, prefix: string) => {
+                if (path.endsWith('.wasm')) {
+                  return wasmUrl;
+                }
+                return prefix + path;
+              },
+            },
+          })
+        : prepareZXingModule({ fireImmediately: true });
+
+      this.zxingReady = initialization.then(
+        () => undefined,
+        (error) => {
+          this.zxingReady = null;
+          throw error;
+        },
+      );
+    }
+
+    return this.zxingReady;
   }
 
   private reportError(error: unknown) {
@@ -108,7 +124,7 @@ export default class NanoScan {
     let cameraStream: MediaStream | null = null;
 
     try {
-      await requestCameraPermission();
+      await Promise.all([requestCameraPermission(), this.ready()]);
       cameraStream = await openCamera({
         width: this.options.resolution.width,
         height: this.options.resolution.height,

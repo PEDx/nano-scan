@@ -78,6 +78,7 @@ describe('NanoScan', () => {
     Object.values(zxingMocks).forEach((mock) => mock.mockReset());
 
     utilsMocks.closeCameraMock.mockResolvedValue(undefined);
+    zxingMocks.prepareZXingModuleMock.mockResolvedValue(undefined);
     utilsMocks.requestCameraPermissionMock.mockResolvedValue(undefined);
     utilsMocks.checkCameraConstraintsCapabilitiesMock.mockReturnValue(true);
     utilsMocks.getCameraCapabilitiesZoomRangeMock.mockReturnValue({ min: 1, max: 3 });
@@ -105,17 +106,21 @@ describe('NanoScan', () => {
     expect(container.contains(scanner.cameraCanvasNode)).toBe(true);
   });
 
-  it('configures a custom wasm url when provided', () => {
+  it('configures a custom wasm url and caches the ready promise', async () => {
     const container = document.createElement('div');
 
-    new NanoScan({
+    const scanner = new NanoScan({
       container,
       resolution: { width: 1080, height: 1080 },
       zxingWASMUrl: 'https://cdn.example.com/zxing.wasm',
     });
 
+    await scanner.ready();
+    await scanner.ready();
+
     expect(zxingMocks.prepareZXingModuleMock).toHaveBeenCalledTimes(1);
     const config = zxingMocks.prepareZXingModuleMock.mock.calls[0][0];
+    expect(config.fireImmediately).toBe(true);
     expect(config.overrides.locateFile('reader.wasm', '/assets/')).toBe('https://cdn.example.com/zxing.wasm');
     expect(config.overrides.locateFile('reader.js', '/assets/')).toBe('/assets/reader.js');
   });
@@ -176,6 +181,7 @@ describe('NanoScan', () => {
     await scheduledLoop?.();
 
     expect(utilsMocks.requestCameraPermissionMock).toHaveBeenCalledTimes(1);
+    expect(zxingMocks.prepareZXingModuleMock).toHaveBeenCalledWith({ fireImmediately: true });
     expect(utilsMocks.openCameraMock).toHaveBeenCalledWith({
       width: 1080,
       height: 720,
@@ -307,6 +313,10 @@ describe('NanoScan', () => {
 
     const { stream } = createStream();
     let resolveOpenCamera!: (value: MediaStream) => void;
+    let markOpenCameraStarted!: () => void;
+    const openCameraStarted = new Promise<void>((resolve) => {
+      markOpenCameraStarted = resolve;
+    });
     utilsMocks.openCameraMock.mockImplementation(
       ({ video }) =>
         new Promise<MediaStream>((resolve) => {
@@ -320,12 +330,12 @@ describe('NanoScan', () => {
             video.srcObject = value;
             resolve(value);
           };
+          markOpenCameraStarted();
         }),
     );
 
     const pending = scanner.startScan();
-    await Promise.resolve();
-    await Promise.resolve();
+    await openCameraStarted;
     scanner.stopScan();
     resolveOpenCamera(stream);
     await pending;

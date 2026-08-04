@@ -12,7 +12,7 @@
     "build": "npm run build:js && npm run build:types",
     "build:js": "rolldown -c rolldown.config.ts",
     "build:types": "tsc -p tsconfig.build.json",
-    "dev": "cd docs && vite",
+    "dev": "cd docs && vite --host",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -31,13 +31,12 @@
   "author": "alan.ped",
   "license": "MIT",
   "dependencies": {
-    "zxing-wasm": "^2.1.2"
+    "zxing-wasm": "^3.1.2"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^12.1.2",
     "jsdom": "^29.0.2",
     "rolldown": "^1.0.0-beta.8",
-    "tslib": "^2.8.1",
+    "typescript": "7.0.2",
     "vite": "^8.0.7",
     "vitest": "^4.1.3"
   }

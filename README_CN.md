@@ -80,7 +80,7 @@ constructor(options: INanoScanOptions)
 | `container`   | `HTMLElement \| null`               | `null`                                                           | **必需**。用于显示相机预览的 HTML 容器元素                               |
 | `resolution`  | `{ width: number, height: number }` | `{ width: 1080, height: 1080 }`                                   | 相机分辨率                                                               |
 | `zxingOptions`| `ReaderOptions`                     | `{ tryHarder: true, formats: ['QRCode'], maxNumberOfSymbols: 1 }` | zxing-wasm 读取器选项                                                    |
-| `zxingWASMUrl`| `string`                            | `undefined`                                                      | 自定义 zxing-wasm WebAssembly 文件 URL                                   |
+| `zxingWASMUrl`| `string`                            | `undefined`                                                      | 自定义 WebAssembly URL；不传时使用 zxing-wasm 内置 CDN                    |
 | `marker`      | `boolean`                           | `true`                                                           | 是否显示扫描结果标记                                                     |
 | `frame`       | `boolean`                           | `true`                                                           | 是否显示扫描框                                                           |
 | `fps`         | `number`                            | `30`                                                             | 扫描帧率                                                                 |
@@ -91,6 +91,14 @@ constructor(options: INanoScanOptions)
 
 ### 方法
 
+#### ready()
+
+下载、编译并初始化 zxing-wasm 模块，返回的 Promise 会被缓存。通常无需手动调用，因为 `startScan()` 会自动等待 ready。
+
+```ts
+ready(): Promise<void>
+```
+
 #### startScan()
 
 开始扫描过程。
@@ -99,7 +107,7 @@ constructor(options: INanoScanOptions)
 async startScan(): Promise<void>
 ```
 
-初始化相机，设置画布，并开始扫描循环。
+等待 zxing-wasm ready，初始化相机、设置画布并开始扫描循环。
 
 #### stopScan()
 
